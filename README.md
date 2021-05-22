@@ -1,5 +1,5 @@
 # R&D on webrtc video streaming  
-## [pion/ion-sfu](https://github.com/pion/ion-sfu)
+## Pure Go WebRTC SFU [pion/ion-sfu](https://github.com/pion/ion-sfu)
 
 ## Useful Articles
 
