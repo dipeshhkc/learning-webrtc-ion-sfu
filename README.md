@@ -3,7 +3,7 @@
 
 ## Useful Articles
 
-I will be adding the articles helpful for me in my R&D process
+I will be adding the articles helpful for me in my R&D 
 
 * [Building a WebRTC video and audio Broadcaster in Golang using ION-SFU, and media devices](https://gabrieltanner.org/blog/broadcasting-ion-sfu)
 
