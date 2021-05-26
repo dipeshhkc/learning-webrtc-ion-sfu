@@ -1,0 +1,8 @@
+.App > div {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.App h1 {
+  text-align:  center;
+}
