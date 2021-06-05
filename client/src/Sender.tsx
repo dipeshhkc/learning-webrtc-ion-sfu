@@ -137,9 +137,8 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
       {connectionState === 'connected' && (
         <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-row">
           <button
-            className={`${
-              muted ? 'bg-red-700' : 'bg-gray-800'
-            } transition duration-500 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}
+            className={`${muted ? 'bg-red-700' : 'bg-gray-800'
+              } transition duration-500 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}
             onClick={() => {
               const video = sentVideoRef.current?.srcObject as MediaStream;
               video.getAudioTracks().forEach((t) => (t.enabled = !t.enabled));
@@ -149,9 +148,8 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
             {muted ? <AiOutlineAudioMuted /> : <AiOutlineAudio />}
           </button>
           <button
-            className={`${
-              videoMuted ? 'bg-red-700' : 'bg-gray-800'
-            } transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}
+            className={`${videoMuted ? 'bg-red-700' : 'bg-gray-800'
+              } transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}
             onClick={() => {
               const video = sentVideoRef.current?.srcObject as MediaStream;
               video.getVideoTracks().forEach((t) => (t.enabled = !t.enabled));
@@ -159,6 +157,20 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
             }}
           >
             {videoMuted ? <FiVideoOff /> : <FiVideo />}
+          </button>
+          <button onClick={async () => {
+            console.log(pcSend.current)
+            try {
+              //@ts-ignore
+              const media = await navigator.mediaDevices.getDisplayMedia() as MediaStream;
+              // const sender = pcSend.current?.getSenders().find(s => s.track?.kind === "video")
+              const screenTrack = media.getTracks()
+              pcSend.current?.addTrack(screenTrack[0], media)
+            } catch (e) {
+              console.log(e);
+            }
+          }} className="bg-gray-800 transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">
+            SS
           </button>
         </div>
       )}
