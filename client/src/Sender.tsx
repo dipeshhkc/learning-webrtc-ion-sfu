@@ -64,8 +64,10 @@ const iceServers = {
 
     //called after adding tracks
     pcSend.current.onicecandidate = (event) => {
-      console.log('oniceCandiate Sender Called');
-      if (event.candidate) {
+      console.log('oniceCandiate Sender Called',websocket.current);
+     
+      if (event.candidate && connectionState=="connected") {
+        
         websocket.current?.send(
           JSON.stringify({
             type: 'tricle',
@@ -107,10 +109,10 @@ const iceServers = {
       <video className="object-cover h-full w-full" autoPlay ref={sentVideoRef}></video>
       {connectionState != 'connected' && (
         <button
-          className="bg-blue-700 absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
-          onClick={handleStartPublishing}
+        className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
+        onClick={handleStartPublishing}
         >
-          StartPublishing
+          Start Publishing
         </button>
       )}
     </div>
