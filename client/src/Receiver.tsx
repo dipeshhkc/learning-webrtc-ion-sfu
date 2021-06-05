@@ -85,7 +85,6 @@ export const Receiver: React.FC<any> = ({
     };
   };
 
-
   return (
     <div className="grid grid-cols-3 gap-x-10 gap-y-10 p-20">
       {connectionState !== "connected" &&
@@ -93,13 +92,15 @@ export const Receiver: React.FC<any> = ({
       }
       {streams.filter(s => s.id !== senderStreamID).map((stream, index) => (
         <div
-          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
+          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden bg-gray-900"
           key={stream.id}
         >
           <Video srcObject={stream} />
           <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
         </div>
       ))}
+
+      
     </div>
   );
 };
