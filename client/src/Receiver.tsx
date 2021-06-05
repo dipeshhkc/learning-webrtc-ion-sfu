@@ -1,18 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AiFillPushpin } from 'react-icons/ai';
-import { SingleVideo } from './SingleVideo';
 
 export const Receiver: React.FC<any> = ({ senderStreamID }) => {
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
   const [streams, setStreams] = useState<MediaStream[]>([]);
 
-  const [pin, setPin] = useState<{ open: boolean; stream: MediaStream | null }>(
-    {
-      open: false,
-      stream: null,
-    }
-  );
+  const [pinStream, setPinStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
     handleStartPublishing();
@@ -103,16 +97,16 @@ export const Receiver: React.FC<any> = ({ senderStreamID }) => {
           RETREIVING VIDEOS...
         </p>
       )}
-      <SingleVideo
-        open={pin.open}
-        stream={pin.stream}
-        setModalClose={() => setPin({ open: false, stream: null })}
-      />
+
       {streams
         .filter((s) => s.id !== senderStreamID && s.active)
         .map((stream, index) => (
           <div
-            className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden bg-gray-900 group"
+            className={` rounded-3xl overflow-hidden bg-gray-900 group transition duration-500 ${
+              pinStream == stream
+                ? 'max-h-screen fixed left-0 top-0 h-screen w-screen'
+                : 'relative w-full h-full max-h-96'
+            }`}
             key={stream.id}
           >
             <Video srcObject={stream} />
@@ -121,7 +115,9 @@ export const Receiver: React.FC<any> = ({ senderStreamID }) => {
             </p>
             <p
               className="cursor-pointer absolute text-white top-1/2 left-1/2 text-2xl hidden group-hover:block "
-              onClick={() => setPin({ open: true, stream: stream })}
+              onClick={() =>
+                pinStream ? setPinStream(null) : setPinStream(stream)
+              }
             >
               <AiFillPushpin />
             </p>
