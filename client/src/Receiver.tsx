@@ -7,7 +7,9 @@ export const Receiver: React.FC<any> = ({
   const pcSend = useRef<RTCPeerConnection>();
   const [streams, setStreams] = useState<MediaStream[]>([]);
 
-  const recvVideoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    handleStartPublishing()
+  }, [])
 
   const [connectionState, setConnectionState] = useState<string>();
 
@@ -86,6 +88,9 @@ export const Receiver: React.FC<any> = ({
 
   return (
     <div className="grid grid-cols-3 gap-x-10 gap-y-10 p-20">
+      {connectionState !== "connected" &&
+        <p className="fixed right-1/2 top-1/2 transform translate-x-1/2 -translate-y-1/2 text-white">RETREIVING VIDEOS...</p>
+      }
       {streams.filter(s => s.id !== senderStreamID).map((stream, index) => (
         <div
           className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
@@ -95,17 +100,6 @@ export const Receiver: React.FC<any> = ({
           <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
         </div>
       ))}
-
-
-      {connectionState != 'connected' && (
-        <button
-          className="bg-blue-700 absolute top-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
-          onClick={handleStartPublishing}
-        >
-          Start Viewing
-        </button>
-      )}
-      {/* <pre>{connectionState}</pre> */}
     </div>
   );
 };

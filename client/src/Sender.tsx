@@ -7,7 +7,7 @@ export const Sender: React.FC<any> = ({
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
 
-  const [connectionState, setConnectionState] = useState<string>();
+  const [connectionState, setConnectionState] = useState<RTCPeerConnectionState>("new");
 
   useEffect(() => {
     const successCallbcak = (stream: any) => {
@@ -28,18 +28,21 @@ export const Sender: React.FC<any> = ({
   }, []);
 
   // Free public STUN servers provided by Google.
-const iceServers = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-    { urls: 'stun:stun4.l.google.com:19302' },
-  ],
-}
+  const iceServers = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
+    ],
+  }
 
 
   const handleStartPublishing = async () => {
+
+    setConnectionState("connecting")
+
     if (!sentVideoRef.current) {
       return;
     }
@@ -62,15 +65,15 @@ const iceServers = {
     pcSend.current = new RTCPeerConnection(iceServers);
     pcSend.current.onconnectionstatechange = () => {
       console.log('state: ', pcSend.current?.connectionState);
-      setConnectionState(pcSend.current?.connectionState);
+      setConnectionState(pcSend.current?.connectionState || "new");
     };
 
     //called after adding tracks
     pcSend.current.onicecandidate = (event) => {
-      console.log('oniceCandiate Sender Called',websocket.current);
-     
-      if (event.candidate && connectionState=="connected") {
-        
+      console.log('oniceCandiate Sender Called', websocket.current);
+
+      if (event.candidate && connectionState == "connected") {
+
         websocket.current?.send(
           JSON.stringify({
             type: 'tricle',
@@ -110,14 +113,17 @@ const iceServers = {
   return (
     <div className="w-full h-full">
       <video className="object-cover h-full w-full" autoPlay ref={sentVideoRef}></video>
-      {connectionState != 'connected' && (
+      {["new", "disconnected", "failed"].includes(connectionState) && (
         <button
-        className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
-        onClick={handleStartPublishing}
+          className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
+          onClick={handleStartPublishing}
         >
-          Start Publishing
+          JOIN
         </button>
       )}
+      {connectionState === "connecting" &&
+        <p className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">connecting...</p>
+      }
     </div>
   );
 };
