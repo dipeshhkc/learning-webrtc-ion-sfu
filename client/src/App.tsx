@@ -1,4 +1,3 @@
-import './App.css';
 import { Sender } from './Sender';
 import { Receiver } from "./Receiver";
 import { useState } from 'react';
@@ -10,7 +9,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>ION SFU CLIENT</h1>
+      <p>Video Streaming</p>
       <div>
         <button onClick={() => setSenderEnabled(e => !e)}>Enable Sender</button>
         <button onClick={() => setReceiverEnabled(e => !e)}>Enable Receiver</button>
