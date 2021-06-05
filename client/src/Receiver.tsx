@@ -114,7 +114,7 @@ export const Receiver: React.FC<any> = ({ senderStreamID }) => {
               FRIEND {index + 1}
             </p>
             <p
-              className="cursor-pointer absolute text-white top-1/2 left-1/2 text-2xl hidden group-hover:block "
+              className="cursor-pointer absolute text-white top-1/2 bg-gray-800 px-2 left-1/2 text-2xl hidden group-hover:block "
               onClick={() =>
                 pinStream ? setPinStream(null) : setPinStream(stream)
               }
