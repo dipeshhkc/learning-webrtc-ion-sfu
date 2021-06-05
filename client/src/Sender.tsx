@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import {AiOutlineAudio, AiOutlineAudioMuted} from "react-icons/ai"
-import {FiVideo, FiVideoOff,} from "react-icons/fi"
+import { AiOutlineAudio, AiOutlineAudioMuted } from 'react-icons/ai';
+import { FiVideo, FiVideoOff } from 'react-icons/fi';
 
-export const Sender: React.FC<any> = ({
-  setSenderStreamID
-}) => {
+export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
   const sentVideoRef = useRef<HTMLVideoElement>(null);
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
 
+  const [videoMuted, setVideoMuted] = useState(false);
   const [muted, setMuted] = useState(false);
 
-  const [connectionState, setConnectionState] = useState<RTCPeerConnectionState>("new");
+  const [connectionState, setConnectionState] =
+    useState<RTCPeerConnectionState>('new');
 
   useEffect(() => {
     const successCallbcak = (stream: any) => {
@@ -40,18 +40,18 @@ export const Sender: React.FC<any> = ({
       { urls: 'stun:stun3.l.google.com:19302' },
       { urls: 'stun:stun4.l.google.com:19302' },
     ],
-  }
-
+  };
 
   const handleStartPublishing = async () => {
-
-    setConnectionState("connecting")
+    setConnectionState('connecting');
 
     if (!sentVideoRef.current) {
       return;
     }
 
-    websocket.current = new WebSocket('ws://ec2-18-181-195-202.ap-northeast-1.compute.amazonaws.com:7000/ws');
+    websocket.current = new WebSocket(
+      'ws://ec2-18-181-195-202.ap-northeast-1.compute.amazonaws.com:7000/ws'
+    );
     websocket.current.onopen = () => console.log('connection opened');
     websocket.current.onmessage = async (e) => {
       const response = JSON.parse(e.data);
@@ -69,15 +69,14 @@ export const Sender: React.FC<any> = ({
     pcSend.current = new RTCPeerConnection(iceServers);
     pcSend.current.onconnectionstatechange = () => {
       console.log('state: ', pcSend.current?.connectionState);
-      setConnectionState(pcSend.current?.connectionState || "new");
+      setConnectionState(pcSend.current?.connectionState || 'new');
     };
 
     //called after adding tracks
     pcSend.current.onicecandidate = (event) => {
       console.log('oniceCandiate Sender Called', websocket.current);
 
-      if (event.candidate && connectionState == "connected") {
-
+      if (event.candidate && connectionState == 'connected') {
         websocket.current?.send(
           JSON.stringify({
             type: 'tricle',
@@ -116,8 +115,13 @@ export const Sender: React.FC<any> = ({
 
   return (
     <div className="w-full h-full">
-      <video className="object-cover h-full w-full" autoPlay muted ref={sentVideoRef}></video>
-      {["new", "disconnected", "failed"].includes(connectionState) && (
+      <video
+        className="object-cover h-full w-full"
+        autoPlay
+        muted
+        ref={sentVideoRef}
+      ></video>
+      {['new', 'disconnected', 'failed'].includes(connectionState) && (
         <button
           className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
           onClick={handleStartPublishing}
@@ -125,23 +129,39 @@ export const Sender: React.FC<any> = ({
           JOIN
         </button>
       )}
-      {connectionState === "connecting" &&
-        <p className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">connecting...</p>
-      }
-      {
-        connectionState === "connected" && <button
-          className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
-          onClick={() => {
-            const video = sentVideoRef.current?.srcObject as MediaStream;
-            video.getAudioTracks().forEach(t => t.enabled = !t.enabled)
-            setMuted((m) => !m)
-          }}
-        >
-          {muted ? <AiOutlineAudio/>: <AiOutlineAudioMuted/>}
-          {muted ? <FiVideo/>: <FiVideoOff/>}
-        </button>
-      }
-
+      {connectionState === 'connecting' && (
+        <p className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">
+          connecting...
+        </p>
+      )}
+      {connectionState === 'connected' && (
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-row">
+          <button
+            className={`${
+              muted ? 'bg-red-700' : 'bg-gray-800'
+            } transition duration-500 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}
+            onClick={() => {
+              const video = sentVideoRef.current?.srcObject as MediaStream;
+              video.getAudioTracks().forEach((t) => (t.enabled = !t.enabled));
+              setMuted((m) => !m);
+            }}
+          >
+            {muted ? <AiOutlineAudioMuted /> : <AiOutlineAudio />}
+          </button>
+          <button
+            className={`${
+              videoMuted ? 'bg-red-700' : 'bg-gray-800'
+            } transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}
+            onClick={() => {
+              const video = sentVideoRef.current?.srcObject as MediaStream;
+              video.getVideoTracks().forEach((t) => (t.enabled = !t.enabled));
+              setVideoMuted((m) => !m);
+            }}
+          >
+            {videoMuted ? <FiVideoOff /> : <FiVideo />}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
