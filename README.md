@@ -1,6 +1,18 @@
 # R&D on webrtc video streaming  
-## Pure Go WebRTC SFU [pion/ion-sfu](https://github.com/pion/ion-sfu)
+## Server : Pure Go WebRTC SFU [pion/ion-sfu](https://github.com/pion/ion-sfu)
+## Frontend: React
 
+
+
+![Demo](./demo.gif)
+
+
+## Implemented Features (till now)
+
+* Audio / Video Streaming
+* Screen Sharing
+* Video/Audio Mute/UnMute
+* Pin/UnPin
 ## Useful Articles
 
 I will be adding the articles helpful for me in my R&D 
