@@ -7,6 +7,7 @@ export const Sender: React.FC<any> = ({
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
 
+  const [videoMuted, setVideoMuted] = useState(false);
   const [muted, setMuted] = useState(false);
 
   const [connectionState, setConnectionState] = useState<RTCPeerConnectionState>("new");
@@ -127,18 +128,31 @@ export const Sender: React.FC<any> = ({
         <p className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">connecting...</p>
       }
       {
-        connectionState === "connected" && <button
-          className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
-          onClick={() => {
-            const video = sentVideoRef.current?.srcObject as MediaStream;
-            video.getAudioTracks().forEach(t => t.enabled = !t.enabled)
-            setMuted((m) => !m)
-          }}
-        >
-          {muted ? "UNMUTE": "MUTE"}
-        </button>
+        connectionState === "connected" &&
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-row">
+          <button
+            className={"bg-blue-700 text-white max-h-10 max-w-52 rounded-md px-5 py-2"}
+            onClick={() => {
+              const video = sentVideoRef.current?.srcObject as MediaStream;
+              video.getAudioTracks().forEach(t => t.enabled = !t.enabled)
+              setMuted((m) => !m)
+            }}
+          >
+            {muted ? "UNMUTE" : "MUTE"}
+          </button>
+          <button
+            className="bg-blue-700 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
+            onClick={() => {
+              const video = sentVideoRef.current?.srcObject as MediaStream;
+              video.getVideoTracks().forEach(t => t.enabled = !t.enabled)
+              setVideoMuted((m) => !m)
+            }}
+          >
+            {videoMuted ? "VUM" : "VM"}
+          </button>
+        </div>
       }
 
-    </div>
+    </div >
   );
 };
