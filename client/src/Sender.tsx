@@ -136,13 +136,13 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
     if (sender) {
       pcSend.current?.removeTrack(sender);
     }
+    setScreenShareEnabled(undefined);
   }
 
   const handleScreenShare = async () => {
     if (screenShareEnabled) {
-      screenShareEnabled.stop();
+      screenShareEnabled?.stop();
       removeScreenShare();
-      setScreenShareEnabled(undefined);
       return
     }
     try {
