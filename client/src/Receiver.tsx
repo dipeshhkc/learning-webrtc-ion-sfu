@@ -60,6 +60,10 @@ export const Receiver: React.FC<any> = ({
     // };
     pcSend.current.ontrack = (e) => {
       console.log('streams: ', e.streams);
+      e.streams[0].onremovetrack = () => {
+        console.log("onremove track")
+        setStreams(s => s.filter(str => str.id !== e.streams[0].id))
+      }
       setStreams((s) => {
         if (e.streams.length == 1 && e.streams[0].active) {
           if (s.map((s) => s.id).indexOf(e.streams[0].id) === -1) {
@@ -90,7 +94,7 @@ export const Receiver: React.FC<any> = ({
       {connectionState !== "connected" &&
         <p className="fixed right-1/2 top-1/2 transform translate-x-1/2 -translate-y-1/2 text-white">RETREIVING VIDEOS...</p>
       }
-      {streams.filter(s => s.id !== senderStreamID).map((stream, index) => (
+      {streams.filter(s => s.id !== senderStreamID && s.active).map((stream, index) => (
         <div
           className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden bg-gray-900"
           key={stream.id}
@@ -100,7 +104,7 @@ export const Receiver: React.FC<any> = ({
         </div>
       ))}
 
-      
+
     </div>
   );
 };
