@@ -3,12 +3,16 @@ import React, { useEffect, useRef, useState } from 'react';
 export const Receiver = () => {
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
+  const [streams, setStreams] = useState<MediaStream[]>([]);
+
   const recvVideoRef = useRef<HTMLVideoElement>(null);
 
   const [connectionState, setConnectionState] = useState<string>();
 
   const handleStartPublishing = async () => {
-    websocket.current = new WebSocket('ws://ec2-18-181-195-202.ap-northeast-1.compute.amazonaws.com:7000/ws');
+    websocket.current = new WebSocket(
+      'ws://ec2-18-181-195-202.ap-northeast-1.compute.amazonaws.com:7000/ws'
+    );
     // websocket.current = new WebSocket("ws://ec2-54-248-35-65.ap-northeast-1.compute.amazonaws.com:7000/ws");
     pcSend.current = new RTCPeerConnection();
 
@@ -44,11 +48,22 @@ export const Receiver = () => {
     };
 
     //stream sfu bata aayesi call huncha
+    // pcSend.current.ontrack = (e) => {
+    //   console.log('streams: ', e.streams);
+    //   if (recvVideoRef.current) {
+    //     recvVideoRef.current.srcObject = e.streams[0];
+    //   }
+    // };
     pcSend.current.ontrack = (e) => {
       console.log('streams: ', e.streams);
-      if (recvVideoRef.current) {
-        recvVideoRef.current.srcObject = e.streams[0];
-      }
+      setStreams((s) => {
+        if (e.streams.length == 1 && e.streams[0].active) {
+          if (s.map((s) => s.id).indexOf(e.streams[0].id) === -1) {
+            s.push(e.streams[0]);
+          }
+        }
+        return s;
+      });
     };
 
     pcSend.current.onicecandidate = (event) => {
@@ -66,17 +81,87 @@ export const Receiver = () => {
     };
   };
 
+  console.log('streams', streams);
+
   return (
-    <div className="w-full h-full">
-      <video className="object-cover h-full w-full" autoPlay ref={recvVideoRef}></video>
+    <div className="grid grid-cols-3 gap-x-10 gap-y-10 p-20">
+      {streams.map((stream, index) => (
+        <div
+          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
+          key={stream.id}
+        >
+          <Video srcObject={stream} />
+          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
+        </div>
+      ))}
+       {streams.map((stream, index) => (
+        <div
+          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
+          key={stream.id}
+        >
+          <Video srcObject={stream} />
+          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
+        </div>
+      ))}
+       {streams.map((stream, index) => (
+        <div
+          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
+          key={stream.id}
+        >
+          <Video srcObject={stream} />
+          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
+        </div>
+      ))}
+       {streams.map((stream, index) => (
+        <div
+          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
+          key={stream.id}
+        >
+          <Video srcObject={stream} />
+          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
+        </div>
+      ))}
+       {streams.map((stream, index) => (
+        <div
+          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
+          key={stream.id}
+        >
+          <Video srcObject={stream} />
+          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
+        </div>
+      ))}
+
       {connectionState != 'connected' && (
         <button
-          className="bg-blue-700 absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
+          className="bg-blue-700 absolute top-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
           onClick={handleStartPublishing}
         >
-          StartViewing
+          Start Viewing
         </button>
       )}
+      {/* <pre>{connectionState}</pre> */}
     </div>
   );
+};
+
+const Video: React.FC<any> = ({ srcObject }) => {
+  const recvVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (srcObject && recvVideoRef.current) {
+      recvVideoRef.current.srcObject = srcObject;
+    }
+  }, [srcObject]);
+
+  if (srcObject.active) {
+    return (
+      <video
+        autoPlay
+        ref={recvVideoRef}
+        className="object-cover w-full h-full"
+      ></video>
+    );
+  }
+
+  return null;
 };

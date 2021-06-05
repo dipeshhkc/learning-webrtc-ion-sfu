@@ -24,6 +24,18 @@ export const Sender = () => {
     );
   }, []);
 
+  // Free public STUN servers provided by Google.
+const iceServers = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+  ],
+}
+
+
   const handleStartPublishing = async () => {
     if (!sentVideoRef.current) {
       return;
@@ -44,7 +56,7 @@ export const Sender = () => {
       }
     };
 
-    pcSend.current = new RTCPeerConnection();
+    pcSend.current = new RTCPeerConnection(iceServers);
     pcSend.current.onconnectionstatechange = () => {
       console.log('state: ', pcSend.current?.connectionState);
       setConnectionState(pcSend.current?.connectionState);
