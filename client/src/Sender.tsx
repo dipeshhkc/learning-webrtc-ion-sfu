@@ -7,6 +7,8 @@ export const Sender: React.FC<any> = ({
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
 
+  const [muted, setMuted] = useState(false);
+
   const [connectionState, setConnectionState] = useState<RTCPeerConnectionState>("new");
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export const Sender: React.FC<any> = ({
     navigator.getUserMedia(
       {
         video: true,
-        audio: false,
+        audio: true,
       },
       successCallbcak,
       console.error
@@ -112,7 +114,7 @@ export const Sender: React.FC<any> = ({
 
   return (
     <div className="w-full h-full">
-      <video className="object-cover h-full w-full" autoPlay ref={sentVideoRef}></video>
+      <video className="object-cover h-full w-full" autoPlay muted ref={sentVideoRef}></video>
       {["new", "disconnected", "failed"].includes(connectionState) && (
         <button
           className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
@@ -124,6 +126,19 @@ export const Sender: React.FC<any> = ({
       {connectionState === "connecting" &&
         <p className="absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">connecting...</p>
       }
+      {
+        connectionState === "connected" && <button
+          className="bg-blue-700 absolute bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
+          onClick={() => {
+            const video = sentVideoRef.current?.srcObject as MediaStream;
+            video.getAudioTracks().forEach(t => t.enabled = !t.enabled)
+            setMuted((m) => !m)
+          }}
+        >
+          {muted ? "UNMUTE": "MUTE"}
+        </button>
+      }
+
     </div>
   );
 };
