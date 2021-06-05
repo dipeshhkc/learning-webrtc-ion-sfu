@@ -29,7 +29,7 @@ export const Sender = () => {
       return;
     }
 
-    websocket.current = new WebSocket('ws://localhost:7000/ws');
+    websocket.current = new WebSocket('ws://ec2-18-181-195-202.ap-northeast-1.compute.amazonaws.com:7000/ws');
     websocket.current.onopen = () => console.log('connection opened');
     websocket.current.onmessage = async (e) => {
       const response = JSON.parse(e.data);
@@ -48,7 +48,7 @@ export const Sender = () => {
     pcSend.current.onconnectionstatechange = () => {
       console.log('state: ', pcSend.current?.connectionState);
       setConnectionState(pcSend.current?.connectionState);
-    }
+    };
 
     //called after adding tracks
     pcSend.current.onicecandidate = (event) => {
@@ -91,16 +91,16 @@ export const Sender = () => {
   };
 
   return (
-    <div>
-      <button onClick={handleStartPublishing}>StartPublishing</button>
-      <br />
-      <video
-        autoPlay
-        ref={sentVideoRef}
-        style={{ width: 200, height: 200, background: '#333' }}
-      ></video>
-      <br />
-      <pre>ConnectionState: {connectionState}</pre>
+    <div className="w-full h-full">
+      <video className="object-cover h-full w-full" autoPlay ref={sentVideoRef}></video>
+      {connectionState != 'connected' && (
+        <button
+          className="bg-blue-700 absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-52 rounded-md px-5 py-2"
+          onClick={handleStartPublishing}
+        >
+          StartPublishing
+        </button>
+      )}
     </div>
   );
 };
