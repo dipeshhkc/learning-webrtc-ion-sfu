@@ -59,7 +59,7 @@ export const Receiver: React.FC<any> = ({
     //   }
     // };
     pcSend.current.ontrack = (e) => {
-      console.log('streams: ', e.streams);
+      console.log('got-streams: ', e.streams);
       e.streams[0].onremovetrack = () => {
         console.log("onremove track")
         setStreams(s => s.filter(str => str.id !== e.streams[0].id))
