@@ -10,6 +10,8 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
   const [videoMuted, setVideoMuted] = useState(false);
   const [muted, setMuted] = useState(false);
 
+  const [screenShareEnabled, setScreenShareEnabled] = useState<MediaStreamTrack>();
+
   const [connectionState, setConnectionState] =
     useState<RTCPeerConnectionState>('new');
 
@@ -72,6 +74,22 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
       setConnectionState(pcSend.current?.connectionState || 'new');
     };
 
+    pcSend.current.onnegotiationneeded = async () => {
+      console.log("negotiation is needed");
+      if (websocket.current?.readyState === WebSocket.OPEN) {
+        const offer = await pcSend.current?.createOffer()
+        if (offer) {
+          await pcSend.current?.setLocalDescription(offer)
+          websocket.current?.send(
+            JSON.stringify({
+              type: 'offer',
+              data: offer.sdp,
+            })
+          );
+        }
+      }
+    }
+
     //called after adding tracks
     pcSend.current.onicecandidate = (event) => {
       console.log('oniceCandiate Sender Called', websocket.current);
@@ -112,6 +130,34 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
       );
     }, 2000);
   };
+
+  const removeScreenShare = () => {
+    const sender = pcSend.current?.getSenders().find(s => s.track?.id === screenShareEnabled?.id)
+    if (sender) {
+      pcSend.current?.removeTrack(sender);
+    }
+  }
+
+  const handleScreenShare = async () => {
+    if (screenShareEnabled) {
+      screenShareEnabled.stop();
+      removeScreenShare();
+      setScreenShareEnabled(undefined);
+      return
+    }
+    try {
+      //@ts-ignore
+      const media = await navigator.mediaDevices.getDisplayMedia() as MediaStream;
+      const screenTrack = media.getTracks()
+      setScreenShareEnabled(screenTrack[0])
+
+      screenTrack[0].onended = removeScreenShare
+      await pcSend.current?.addTrack(screenTrack[0], media)
+
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <div className="w-full h-full">
@@ -158,18 +204,7 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
           >
             {videoMuted ? <FiVideoOff /> : <FiVideo />}
           </button>
-          <button onClick={async () => {
-            console.log(pcSend.current)
-            try {
-              //@ts-ignore
-              const media = await navigator.mediaDevices.getDisplayMedia() as MediaStream;
-              // const sender = pcSend.current?.getSenders().find(s => s.track?.kind === "video")
-              const screenTrack = media.getTracks()
-              pcSend.current?.addTrack(screenTrack[0], media)
-            } catch (e) {
-              console.log(e);
-            }
-          }} className="bg-gray-800 transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2">
+          <button onClick={handleScreenShare} className={`${!!screenShareEnabled ? "bg-gray-800": "bg-red-800" } transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}>
             SS
           </button>
         </div>
