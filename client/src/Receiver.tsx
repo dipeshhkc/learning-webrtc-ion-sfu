@@ -81,7 +81,6 @@ export const Receiver = () => {
     };
   };
 
-  console.log('streams', streams);
 
   return (
     <div className="grid grid-cols-3 gap-x-10 gap-y-10 p-20">

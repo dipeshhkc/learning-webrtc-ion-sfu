@@ -64,8 +64,10 @@ const iceServers = {
 
     //called after adding tracks
     pcSend.current.onicecandidate = (event) => {
-      console.log('oniceCandiate Sender Called');
-      if (event.candidate) {
+      console.log('oniceCandiate Sender Called',websocket.current);
+     
+      if (event.candidate && connectionState=="connected") {
+        
         websocket.current?.send(
           JSON.stringify({
             type: 'tricle',
