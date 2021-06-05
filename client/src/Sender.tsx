@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import {AiOutlineAudio, AiOutlineAudioMuted} from "react-icons/ai"
+import {FiVideo, FiVideoOff,} from "react-icons/fi"
 
 export const Sender: React.FC<any> = ({
   setSenderStreamID
@@ -135,7 +137,8 @@ export const Sender: React.FC<any> = ({
             setMuted((m) => !m)
           }}
         >
-          {muted ? "UNMUTE": "MUTE"}
+          {muted ? <AiOutlineAudio/>: <AiOutlineAudioMuted/>}
+          {muted ? <FiVideo/>: <FiVideoOff/>}
         </button>
       }
 
