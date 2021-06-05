@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export const Receiver = () => {
+export const Receiver: React.FC<any> = ({
+  senderStreamID,
+}) => {
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
   const [streams, setStreams] = useState<MediaStream[]>([]);
@@ -84,7 +86,7 @@ export const Receiver = () => {
 
   return (
     <div className="grid grid-cols-3 gap-x-10 gap-y-10 p-20">
-      {streams.map((stream, index) => (
+      {streams.filter(s => s.id !== senderStreamID).map((stream, index) => (
         <div
           className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
           key={stream.id}
@@ -93,7 +95,7 @@ export const Receiver = () => {
           <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
         </div>
       ))}
-       
+
 
       {connectionState != 'connected' && (
         <button

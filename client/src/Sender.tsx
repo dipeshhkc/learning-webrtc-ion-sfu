@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-export const Sender = () => {
+export const Sender: React.FC<any> = ({
+  setSenderStreamID
+}) => {
   const sentVideoRef = useRef<HTMLVideoElement>(null);
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
@@ -11,6 +13,7 @@ export const Sender = () => {
     const successCallbcak = (stream: any) => {
       if (sentVideoRef.current) {
         sentVideoRef.current.srcObject = stream;
+        setSenderStreamID(stream.id);
       }
     };
 

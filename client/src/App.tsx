@@ -6,6 +6,8 @@ function App() {
   const [senderEnabled, setSenderEnabled] = useState(false);
   const [receiverEnabled, setReceiverEnabled] = useState(false);
 
+  const [senderStreamID, setSenderStreamID] = useState();
+
   return (
     <div className="bg-gray-800 min-h-screen overflow-auto">
       <div className="bg-gray-500 w-72 h-72 rounded-full fixed right-10 bottom-10 overflow-hidden z-10">
@@ -17,7 +19,7 @@ function App() {
             START STREAMING
           </button>
         ) : (
-          <Sender />
+          <Sender setSenderStreamID={setSenderStreamID} />
         )}
       </div>
       <div className="relative">
@@ -29,7 +31,7 @@ function App() {
             WATCH YOUR FRIENDS
           </button>
         ) : (
-          <Receiver />
+          <Receiver senderStreamID={senderStreamID} />
         )}
       </div>
     </div>
