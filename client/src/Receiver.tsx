@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { AiFillPushpin } from 'react-icons/ai';
+import { SingleVideo } from './SingleVideo';
 
-export const Receiver: React.FC<any> = ({
-  senderStreamID,
-}) => {
+export const Receiver: React.FC<any> = ({ senderStreamID }) => {
   const websocket = useRef<WebSocket>();
   const pcSend = useRef<RTCPeerConnection>();
   const [streams, setStreams] = useState<MediaStream[]>([]);
 
+  const [pin, setPin] = useState<{ open: boolean; stream: MediaStream | null }>(
+    {
+      open: false,
+      stream: null,
+    }
+  );
+
   useEffect(() => {
-    handleStartPublishing()
-  }, [])
+    handleStartPublishing();
+  }, []);
 
   const [connectionState, setConnectionState] = useState<string>();
 
@@ -61,9 +68,9 @@ export const Receiver: React.FC<any> = ({
     pcSend.current.ontrack = (e) => {
       console.log('streams: ', e.streams);
       e.streams[0].onremovetrack = () => {
-        console.log("onremove track")
-        setStreams(s => s.filter(str => str.id !== e.streams[0].id))
-      }
+        console.log('onremove track');
+        setStreams((s) => s.filter((str) => str.id !== e.streams[0].id));
+      };
       setStreams((s) => {
         if (e.streams.length == 1 && e.streams[0].active) {
           if (s.map((s) => s.id).indexOf(e.streams[0].id) === -1) {
@@ -91,20 +98,35 @@ export const Receiver: React.FC<any> = ({
 
   return (
     <div className="grid grid-cols-3 gap-x-10 gap-y-10 p-20">
-      {connectionState !== "connected" &&
-        <p className="fixed right-1/2 top-1/2 transform translate-x-1/2 -translate-y-1/2 text-white">RETREIVING VIDEOS...</p>
-      }
-      {streams.filter(s => s.id !== senderStreamID && s.active).map((stream, index) => (
-        <div
-          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden bg-gray-900"
-          key={stream.id}
-        >
-          <Video srcObject={stream} />
-          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
-        </div>
-      ))}
-
-
+      {connectionState !== 'connected' && (
+        <p className="fixed right-1/2 top-1/2 transform translate-x-1/2 -translate-y-1/2 text-white">
+          RETREIVING VIDEOS...
+        </p>
+      )}
+      <SingleVideo
+        open={pin.open}
+        stream={pin.stream}
+        setModalClose={() => setPin({ open: false, stream: null })}
+      />
+      {streams
+        .filter((s) => s.id !== senderStreamID && s.active)
+        .map((stream, index) => (
+          <div
+            className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden bg-gray-900 group"
+            key={stream.id}
+          >
+            <Video srcObject={stream} />
+            <p className="absolute text-white top-0 left-3">
+              FRIEND {index + 1}
+            </p>
+            <p
+              className="cursor-pointer absolute text-white top-1/2 left-1/2 text-2xl hidden group-hover:block "
+              onClick={() => setPin({ open: true, stream: stream })}
+            >
+              <AiFillPushpin />
+            </p>
+          </div>
+        ))}
     </div>
   );
 };
