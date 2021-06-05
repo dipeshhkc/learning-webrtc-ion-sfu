@@ -94,42 +94,7 @@ export const Receiver = () => {
           <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
         </div>
       ))}
-       {streams.map((stream, index) => (
-        <div
-          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
-          key={stream.id}
-        >
-          <Video srcObject={stream} />
-          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
-        </div>
-      ))}
-       {streams.map((stream, index) => (
-        <div
-          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
-          key={stream.id}
-        >
-          <Video srcObject={stream} />
-          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
-        </div>
-      ))}
-       {streams.map((stream, index) => (
-        <div
-          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
-          key={stream.id}
-        >
-          <Video srcObject={stream} />
-          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
-        </div>
-      ))}
-       {streams.map((stream, index) => (
-        <div
-          className="relative w-full h-full max-h-96 rounded-3xl overflow-hidden"
-          key={stream.id}
-        >
-          <Video srcObject={stream} />
-          <p className="absolute text-white top-0 left-3">FRIEND {index + 1}</p>
-        </div>
-      ))}
+       
 
       {connectionState != 'connected' && (
         <button
