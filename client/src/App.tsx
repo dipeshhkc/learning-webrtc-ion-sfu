@@ -4,8 +4,6 @@ import { useState } from 'react';
 
 function App() {
   const [senderEnabled, setSenderEnabled] = useState(false);
-  const [receiverEnabled, setReceiverEnabled] = useState(false);
-
   const [senderStreamID, setSenderStreamID] = useState();
 
   return (
@@ -23,16 +21,7 @@ function App() {
         )}
       </div>
       <div className="relative">
-        {!receiverEnabled ? (
-          <button
-            className="bg-blue-700 absolute top-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-60 rounded-md px-5 py-2"
-            onClick={() => setReceiverEnabled((e) => !e)}
-          >
-            WATCH YOUR FRIENDS
-          </button>
-        ) : (
-          <Receiver senderStreamID={senderStreamID} />
-        )}
+        <Receiver senderStreamID={senderStreamID} />
       </div>
     </div>
   );
