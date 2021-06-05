@@ -20,7 +20,7 @@ function App() {
           <Sender />
         )}
       </div>
-      <div className="relative h-128">
+      <div className="relative">
         {!receiverEnabled ? (
           <button
             className="bg-blue-700 absolute top-10 left-1/2 transform -translate-x-1/2 text-white max-h-10 max-w-60 rounded-md px-5 py-2"
