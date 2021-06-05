@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineAudio, AiOutlineAudioMuted } from 'react-icons/ai';
 import { FiVideo, FiVideoOff } from 'react-icons/fi';
+import { MdScreenShare,MdStopScreenShare } from 'react-icons/md';
 
 export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
   const sentVideoRef = useRef<HTMLVideoElement>(null);
@@ -205,7 +206,7 @@ export const Sender: React.FC<any> = ({ setSenderStreamID }) => {
             {videoMuted ? <FiVideoOff /> : <FiVideo />}
           </button>
           <button onClick={handleScreenShare} className={`${!!screenShareEnabled ? "bg-gray-800": "bg-red-800" } transition duration-500  ml-2 text-white max-h-10 max-w-52 rounded-md px-5 py-2`}>
-            SS
+          {screenShareEnabled?<MdScreenShare/> : <MdStopScreenShare/>}
           </button>
         </div>
       )}
