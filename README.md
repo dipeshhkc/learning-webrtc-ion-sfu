@@ -6,6 +6,12 @@
 
 ![Demo](./demo.gif)
 
+## Run the project
+
+1. Start SFU Server with `go run main.go`
+2. Start React Frontend with `cd client && yarn start`
+
+
 
 ## Implemented Features (till now)
 
